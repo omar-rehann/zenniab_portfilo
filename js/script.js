@@ -16,11 +16,19 @@
         if (s) root.setAttribute('data-theme', s);
     } catch (e) {}
     label();
+    // Sync theme-color meta with current theme
+    (function() {
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = dark() ? '#14112a' : '#f4f2fb';
+    })();
     btn.addEventListener('click', function() {
         var n = dark() ? 'light' : 'dark';
         root.setAttribute('data-theme', n);
         try { localStorage.setItem('theme', n); } catch (e) {}
         label();
+        // Update browser UI color
+        var meta = document.querySelector('meta[name="theme-color"]');
+        if (meta) meta.content = n === 'dark' ? '#14112a' : '#f4f2fb';
     });
 
     // ================= Accent color swatches =================
@@ -40,7 +48,7 @@
         });
     }
 
-    // ================= Mobile menu (Bootstrap-style dropdown) =================
+    // ================= Mobile menu =================
     var menuBtn = document.getElementById('menuBtn');
     var navLinks = document.getElementById('navLinks');
 
@@ -57,16 +65,15 @@
             menuBtn.setAttribute('aria-label', 'Open menu');
         }
 
-        // زرار الفتح/القفل
         menuBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             if (navLinks.classList.contains('open')) closeMenu();
             else openMenu();
         });
 
-        // يقفل عند اختيار أي رابط
-        navLinks.querySelectorAll('a').forEach(function(a) {
-            a.addEventListener('click', closeMenu);
+        // يقفل عند اختيار أي رابط أو زر الثيم
+        navLinks.querySelectorAll('a, .theme').forEach(function(el) {
+            el.addEventListener('click', closeMenu);
         });
 
         // يقفل عند الضغط بره
